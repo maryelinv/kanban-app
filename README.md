@@ -1,59 +1,80 @@
-# KanbanApp
+# Mini-Kanban (Trello-style) App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.3.
+This project consists of a **standalone Angular + NgRx** implementation of a
+mini-Kanban board used for the coding assessment.
 
-## Development server
+## 🏗️ Architecture Decisions
 
-To start a local development server, run:
+### Standalone Components
+* The project was created with the **Angular CLI standalone** option.
+* `BoardComponent` and `TaskCardComponent` are declared with
+  `standalone: true` and imported directly in the router.
+* Routing uses `provideRouter` and lazy `loadComponent`.
 
-```bash
-ng serve
-```
+### State Management
+* Global state is managed with **NgRx** using the modern provider API:
+  ```ts
+  provideStore(),
+  provideState(KANBAN_FEATURE_KEY, kanbanReducer),
+  provideEffects([KanbanEffects])
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+* Store slice: `KanbanState` keeps a flat array of `Task` objects.
+* Effects handle:
 
-## Code scaffolding
+  * Generating a unique ID on `addTask`.
+  * Triggering the mock AI priority call.
+  * Dispatching success/failure actions.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### UI & Interactions
 
-```bash
-ng generate component component-name
-```
+* **Angular CDK DragDrop** provides Trello-style card movement.
+* Tasks can be added, renamed (inline edit), dragged across columns,
+  or deleted.
+* Each card shows a loading spinner until the AI priority arrives or an
+  error badge if it fails.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 🤖 AI-Assisted Sections
 
-## Building
+I used AI tools (ChatGPT) to accelerate repetitive boilerplate while
+retaining control of the design:
 
-To build the project run:
+| Area                      | How AI Helped                                                                          | My Refinement                                                                                                                        |
+| ------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **NgRx Boilerplate**      | Generated initial actions, reducer, selectors, and effect templates.                   | Reviewed naming, ensured strict typing, added unit tests, and refactored to `inject()` to avoid constructor timing issues.           |
+| **CDK DragDrop**          | Provided example drop-list markup and `CdkDragDrop` handler.                           | Adjusted for strict null checks, added `[cdkDropListConnectedTo]` and null-coalescing (`?? []`) to satisfy Angular strict templates. |
+| **Standalone Conversion** | Suggested provider syntax (`provideStore`, `provideEffects`) and lazy `loadComponent`. | Verified runtime wiring and updated `app.config.ts` to match CLI output.                                                                   |
 
-```bash
-ng build
-```
+### Example Prompts Used
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+* “Generate NgRx actions/reducer/selectors for a Task[] state in Angular.”
+* “Angular CDK drag drop between 3 columns with NgRx update.”
+* “Convert an NgRx module setup to standalone provideStore/provideEffects.”
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## ✅ Validation & Testing
 
-```bash
-ng test
-```
+### Manual Testing
 
-## Running end-to-end tests
+* Added, edited, dragged, and deleted tasks in all columns.
+* Verified spinner → priority badge → error badge flows.
+* Checked that state persists correctly across actions.
 
-For end-to-end (e2e) testing, run:
+### Unit Tests
 
-```bash
-ng e2e
-```
+* `reducer.spec.ts` – confirms tasks are added and priority updates
+  toggle the loading flag correctly.
+* `selectors.spec.ts` – validates `selectTasksByStatus` filtering.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Both tests pass with `ng test`.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 🗂️ Submission Notes
+
+* Feature lives entirely under **`src/app/kanban/`**.
+* Integrates into a standalone Angular app via
+  `main.ts` NgRx providers and a lazy route in `app.routes.ts`.
+

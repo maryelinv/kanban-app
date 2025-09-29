@@ -1,0 +1,65 @@
+.board {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.board__header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.board__header input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.board__header input:focus {
+  outline: 3px solid #DEFAF7;
+}
+
+.board__header button {
+  background: #4ABDBA;
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.column {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 300px;
+}
+
+.column.todo {
+  border: 1px solid #FFC800;
+}
+
+.column.progress {
+  border: 1px solid #574ABD;
+}
+
+.column.done {
+  border: 1px solid #2EDB35;
+}
+
+h3 {
+  margin: 0 0 8px;
+}
+
+.dropzone {
+  min-height: 200px;
+}

@@ -1,0 +1,43 @@
+<div class="board">
+  <header class="board__header">
+    <input [(ngModel)]="newTitle" placeholder="Add a task…" (keyup.enter)="addTask()" />
+    <button (click)="addTask()">Add Task</button>
+  </header>
+
+  <section class="columns">
+
+    <div class="column todo">
+      <h3>To Do</h3>
+      <div cdkDropList #todoList="cdkDropList" [cdkDropListConnectedTo]="[inProgressList, doneList]"
+        (cdkDropListDropped)="drop($event, 'todo')" class="dropzone" [cdkDropListData]="(todo$ | async) ?? []">
+        <ng-container *ngFor="let t of (todo$ | async) ?? []">
+          <app-task-card [task]="t" (updateTitle)="updateTitle($event)" (delete)="delete($event)"></app-task-card>
+        </ng-container>
+      </div>
+    </div>
+
+
+    <div class="column progress">
+      <h3>In Progress</h3>
+      <div cdkDropList #inProgressList="cdkDropList" [cdkDropListConnectedTo]="[todoList, doneList]"
+        (cdkDropListDropped)="drop($event, 'in-progress')" class="dropzone"
+        [cdkDropListData]="(inProgress$ | async) ?? []">
+        <ng-container *ngFor="let t of (inProgress$ | async) ?? []">
+          <app-task-card [task]="t" (updateTitle)="updateTitle($event)" (delete)="delete($event)"></app-task-card>
+        </ng-container>
+      </div>
+    </div>
+
+
+    <div class="column done">
+      <h3>Done</h3>
+      <div cdkDropList #doneList="cdkDropList" [cdkDropListConnectedTo]="[todoList, inProgressList]"
+        (cdkDropListDropped)="drop($event, 'done')" class="dropzone" [cdkDropListData]="(done$ | async) ?? []">
+        <ng-container *ngFor="let t of (done$ | async) ?? []">
+          <app-task-card [task]="t" (updateTitle)="updateTitle($event)" (delete)="delete($event)"></app-task-card>
+        </ng-container>
+      </div>
+    </div>
+
+  </section>
+</div>

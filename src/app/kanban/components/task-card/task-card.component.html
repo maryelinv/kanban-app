@@ -1,0 +1,24 @@
+<div class="card" cdkDrag [cdkDragData]="task">
+  <div class="row">
+    <div class="title" *ngIf="!editing" (click)="startEdit()">{{ task.title }}</div>
+    <div class="edit" *ngIf="editing">
+      <input [(ngModel)]="draftTitle" (keyup.enter)="save()" />
+      <button (click)="save()" class="primary">Save</button>
+      <button (click)="cancel()" class="cancel">Cancel</button>
+    </div>
+    <button class="delete" (click)="doDelete()" title="Delete">×</button>
+  </div>
+
+  <div class="meta">
+    <ng-container *ngIf="task.loadingPriority; else ready">
+      <span class="spinner" aria-label="Loading priority…"></span>
+      <span>Fetching priority…</span>
+    </ng-container>
+    <ng-template #ready>
+      <ng-container *ngIf="!task.errorPriority; else err">
+        <span *ngIf="task.priority" class="badge">Priority: {{ task.priority }}</span>
+      </ng-container>
+      <ng-template #err><span class="badge error">Priority Error</span></ng-template>
+    </ng-template>
+  </div>
+</div>
